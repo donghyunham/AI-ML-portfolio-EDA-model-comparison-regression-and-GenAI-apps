@@ -1,6 +1,6 @@
 # AI & Machine Learning Project Portfolio
 
-> 데이터 탐색(EDA)부터 머신러닝 모델 비교·회귀 예측, 그리고 최신 생성형 AI(RAG & Agent) 애플리케이션 개발까지의 기술 역량을 정돈한 포트폴리오 저장소입니다.
+> 데이터 분석(EDA)부터 머신러닝 모델 비교·회귀 예측, 그리고 생성형 AI(RAG & Agent) 애플리케이션 개발까지의 기술 역량을 정돈한 포트폴리오 저장소입니다.
 
 ---
 
@@ -22,16 +22,38 @@
 ![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 ![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white)
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-101717?style=for-the-badge&logo=github&logoColor=white)
 
 ---
 
-### 💡 Core Architecture (Enterprise RAG Agent)
+## Portfolio Projects Index
 
-```mermaid
-graph LR
-    User([User Request]) --> Agent[AWS Bedrock Agent]
-    Agent --> VectorDB[(Knowledge Base / Vector DB)]
-    VectorDB --> Context[Retrieved Context]
-    Context --> LLM[LLM / Claude 3]
-    LLM --> Action[Summary & Action Items]
+| 번호 | 프로젝트명 | 주요 기술 스택 | 핵심 내용 | 상세 링크 |
+| :--- | :--- | :--- | :--- | :--- |
+| **01** | **Fundamentals (Preprocessing)** | Python, Pandas, NumPy | 결측치 임퓨테이션, 파생 변수 생성 및 조건부 판정 로직 구현 | [상세보기](./01_Fundamentals) |
+| **02** | **Model Comparison** | Scikit-Learn, Classification | Iris 데이터셋 기반 3개 분류 알고리즘 성능(Accuracy 1.0) 비교 분석 | [상세보기](./02_Model_Comparison) |
+| **03** | **Regression Project** | Scikit-Learn, Regression | California 주택 가격 예측 회귀 모델링 ($R^2=0.6885$) 및 산점도 분석 | [상세보기](./03_Regression_Project) |
+| **04** | **Customer Churn EDA** | Python, Seaborn, Matplotlib | 가상 고객 데이터 기반 계약 형태별 이탈 분포 및 월 요금 EDA | [상세보기](./04_CustomerChurn_EDA) |
+| **05** | **Enterprise RAG Agent** | AWS Bedrock, GenAI, Agent | AWS Bedrock 기반 회의록 요약 및 Action Item 추출 에이전트 | [상세보기](./05_Enterprise_RAG_Agent) |
+
+---
+
+## Directory Structure
+
+```text
+AI_Portfolio/
+├── 01_Fundamentals/
+│   ├── README.md
+│   └── data_preprocessing_basics.ipynb
+├── 02_Model_Comparison/
+│   ├── README.md
+│   └── model_comparison.ipynb
+├── 03_Regression_Project/
+│   ├── README.md
+│   └── housing_regression.ipynb
+├── 04_CustomerChurn_EDA/
+│   ├── README.md
+│   └── customer_churn_eda.ipynb
+└── 05_Enterprise_RAG_Agent/
+    ├── README.md
+    └── app/
