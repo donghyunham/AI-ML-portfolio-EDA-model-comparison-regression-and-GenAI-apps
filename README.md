@@ -1,6 +1,6 @@
 # AI & Machine Learning Portfolio | 함동현 (Donghyun Ham)
 
-> **"글로벌 기술 트렌드를 빠르게 흡수하고, 작동하는 AI 서비스로 증명합니다."**  
+> **"글로벌 기술 트렌드를 빠르게 흡수하고, 작동하는 AI 서비스로 증명합니다."**
 > Native 수준의 영어 역량과 AWS 생태계 기반의 엔지니어링 실행력을 겸비한 GenAI Application Developer 함동현입니다.
 
 ---
@@ -14,7 +14,7 @@
 
 ## About Me
 - **Global Tech Capacity**: 미국 및 유럽 7년 Native 수준 영어. 글로벌 기술 문서, 최신 논문, AWS Official Guide 즉시 분석 및 도입
-- **End-to-End Execution**: 데이터 정제(Pandas/NumPy) $\rightarrow$ 탐색적 분석(EDA) $\rightarrow$ 머신러닝 파이프라인 최적화(Scikit-Learn) $\rightarrow$ 생성형 AI 에이전트 서빙(AWS Bedrock/PartyRock) 전 과정 내재화
+- **End-to-End Execution**: 데이터 정제(Pandas/NumPy) -> 탐색적 분석(EDA) -> 머신러닝 파이프라인 최적화(Scikit-Learn) -> 생성형 AI 에이전트 서빙(AWS Bedrock/FastAPI) 전 과정 내재화
 - **Engineering Integrity**: Data Leakage 원천 차단, 과적합 진단, 체계적인 프롬프트 엔지니어링(CoT, Safeguard)을 통한 환각(Hallucination) 억제
 
 ---
@@ -26,6 +26,7 @@
 ![Generative AI](https://img.shields.io/badge/Generative_AI-412991?style=for-the-badge&logo=openai&logoColor=white)
 ![Prompt Engineering](https://img.shields.io/badge/Prompt_Engineering-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)
 ![Agentic Workflow](https://img.shields.io/badge/Agentic_Workflow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 
 ### Machine Learning & Data Science
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
@@ -42,9 +43,9 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **01** | **Fundamentals (Preprocessing)** | Python, Pandas, NumPy | 결측치 임퓨테이션, 파생 변수 생성 및 조건부 합격/불합격 판정 로직 구현 | [상세보기](./01_Fundamentals) |
 | **02** | **Model Comparison** | Scikit-Learn, Classification | Iris 데이터셋 기반 3개 분류 알고리즘 성능(Accuracy 1.0) 비교 및 시각화 | [상세보기](./02_Model_Comparison) |
-| **03** | **Regression Project** | Scikit-Learn, Regression | California 주택 가격 예측 회귀 모델링 ($R^2=0.6885$) 및 산점도 오차 분석 | [상세보기](./03_Regression_Project) |
+| **03** | **Regression Project** | Scikit-Learn, Regression | California 주택 가격 예측 회귀 모델링 (R^2=0.6885) 및 산점도 오차 분석 | [상세보기](./03_Regression_Project) |
 | **04** | **Customer Churn EDA** | Python, Seaborn, Matplotlib | 가상 고객 데이터 기반 계약 형태별 이탈 분포, 월 요금 박스플롯 EDA 수행 | [상세보기](./04_CustomerChurn_EDA) |
-| **05** | **Enterprise RAG Agent** | AWS Bedrock, GenAI, Agent | 비구조화 회의록 데이터 기반 요약 및 Action Item 자동 추출 에이전트 구축 | [상세보기](./05_Enterprise_RAG_Agent) |
+| **05** | **Enterprise RAG Agent** | AWS Bedrock, FastAPI, Agent | 비구조화 회의록 데이터 기반 요약 및 Action Item 자동 추출 에이전트 구축 | [상세보기](./05_Enterprise_RAG_Agent) |
 
 ---
 
@@ -62,6 +63,6 @@
 
 ### Academic Background
 - **한국방송통신대학교** | AI학과 (재학, 2026 졸업 예정)
-- **Ghent University (겐트대학교)** | 자연과학계열 (Coursework, 2018.09 – 2019.09)
+- **Ghent University (겐트대학교)** | 자연과학계열 (Coursework, 2018.09 - 2019.09)
 - **Cedar Park Christian High School (WA, USA)** | High School Diploma (2018.06)
 - **East Linn Christian Academy (OR, USA)** | Middle School Certificate (2014.06)
