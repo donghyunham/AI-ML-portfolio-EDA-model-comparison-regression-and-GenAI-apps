@@ -6,7 +6,7 @@
 ---
 
 ## Tech Stack
-* **LLM & Cloud Services:** AWS Bedrock, AWS PartyRock
+* **LLM & Cloud Services:** AWS Bedrock
 * **Language & Framework:** Python 3.10+, LangChain
 * **Prompt Engineering:** Task Decomposition, Persona Setting, Output Format Safeguard
 
