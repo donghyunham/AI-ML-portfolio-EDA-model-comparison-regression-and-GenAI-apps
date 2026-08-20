@@ -1,6 +1,7 @@
 import json
 import os
 import logging
+import time
 import boto3
 from dotenv import load_dotenv
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -28,12 +29,14 @@ class MeetingSummaryAgent:
             logger.exception("Bedrock 클라이언트 생성 실패: %s", e)
             self.bedrock = None
 
+        self.last_metrics = {}
+
     def retrieve_relevant_chunks(self, transcript: str, query: str = "액션 아이템 및 주요 결정사항", top_k: int = 3) -> list:
         chunks = [c.strip() for c in transcript.strip().split("\n") if c.strip()]
         if not chunks:
             return []
 
-        vectorizer = TfidfVectorizer()
+        vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 4))
         tfidf_matrix = vectorizer.fit_transform(chunks + [query])
 
         chunk_vectors = tfidf_matrix[:-1]
@@ -72,7 +75,12 @@ Analyze the retrieved context below and complete the user query.
 """
 
     def process_transcript(self, transcript: str, query: str = "회의 요약 및 액션 아이템 추출") -> tuple:
+        start_total = time.time()
+
+        start_retrieval = time.time()
         retrieved_chunks = self.retrieve_relevant_chunks(transcript, query=query)
+        retrieval_time = time.time() - start_retrieval
+
         prompt = self._build_rag_prompt(retrieved_chunks if retrieved_chunks else [transcript], query)
 
         if self.bedrock:
@@ -82,17 +90,41 @@ Analyze the retrieved context below and complete the user query.
                     "max_tokens": 1000,
                     "messages": [{"role": "user", "content": prompt}]
                 }
+                start_llm = time.time()
                 response = self.bedrock.invoke_model(
                     modelId=self.model_id,
                     body=json.dumps(payload)
                 )
+                llm_time = time.time() - start_llm
                 result = json.loads(response['body'].read())
+
+                self.last_metrics = {
+                    "retrieval_time_sec": round(retrieval_time, 3),
+                    "llm_response_time_sec": round(llm_time, 3),
+                    "total_time_sec": round(time.time() - start_total, 3),
+                    "retrieved_chunk_count": len(retrieved_chunks),
+                    "used_mock": False,
+                }
                 return result['content'][0]['text'], retrieved_chunks, False, None
             except Exception as e:
                 logger.exception("Bedrock invoke_model 호출 실패: %s", e)
+                self.last_metrics = {
+                    "retrieval_time_sec": round(retrieval_time, 3),
+                    "llm_response_time_sec": None,
+                    "total_time_sec": round(time.time() - start_total, 3),
+                    "retrieved_chunk_count": len(retrieved_chunks),
+                    "used_mock": True,
+                }
                 return self._mock_response(), retrieved_chunks, True, str(e)
         else:
             logger.warning("Bedrock 클라이언트가 초기화되지 않아 mock 응답을 반환합니다.")
+            self.last_metrics = {
+                "retrieval_time_sec": round(retrieval_time, 3),
+                "llm_response_time_sec": None,
+                "total_time_sec": round(time.time() - start_total, 3),
+                "retrieved_chunk_count": len(retrieved_chunks),
+                "used_mock": True,
+            }
             return self._mock_response(), retrieved_chunks, True, "Bedrock 클라이언트 초기화 실패"
 
     def _mock_response(self) -> str:

@@ -20,17 +20,15 @@ class MeetingRequest(BaseModel):
 @app.post("/api/summarize")
 async def summarize_meeting(request: MeetingRequest):
     try:
-        result, retrieved_chunks = agent.process_transcript(request.transcript, request.query)
+        result, retrieved_chunks, is_mock, error = agent.process_transcript(request.transcript, request.query)
 
         return {
             "status": "success",
             "query": request.query,
             "retrieved_chunks_count": len(retrieved_chunks),
+            "used_mock": is_mock,
+            "metrics": agent.last_metrics,
             "result": result
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"에이전트 처리 중 오류 발생: {str(e)}")
-
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
