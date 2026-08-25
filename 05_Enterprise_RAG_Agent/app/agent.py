@@ -6,6 +6,7 @@ import boto3
 from dotenv import load_dotenv
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 load_dotenv()
 
@@ -31,7 +32,7 @@ class MeetingSummaryAgent:
 
         self.last_metrics = {}
 
-    def retrieve_relevant_chunks(self, transcript: str, query: str = "액션 아이템 및 주요 결정사항", top_k: int = 3) -> list:
+    def retrieve_relevant_chunks_tfidf(self, transcript: str, query: str = "액션 아이템 및 주요 결정사항", top_k: int = 3) -> list:
         chunks = [c.strip() for c in transcript.strip().split("\n") if c.strip()]
         if not chunks:
             return []
@@ -43,6 +44,30 @@ class MeetingSummaryAgent:
         query_vector = tfidf_matrix[-1:]
 
         similarities = cosine_similarity(query_vector, chunk_vectors).flatten()
+        top_indices = similarities.argsort()[::-1][:top_k]
+
+        return [chunks[i] for i in top_indices if similarities[i] > 0]
+
+    def _get_embedding(self, text: str) -> list:
+        response = self.bedrock.invoke_model(
+            modelId="amazon.titan-embed-text-v2:0",
+            body=json.dumps({"inputText": text})
+        )
+        result = json.loads(response['body'].read())
+        return result['embedding']
+
+    def retrieve_relevant_chunks_embedding(self, transcript: str, query: str = "액션 아이템 및 주요 결정사항", top_k: int = 3) -> list:
+        chunks = [c.strip() for c in transcript.strip().split("\n") if c.strip()]
+        if not chunks:
+            return []
+
+        chunk_embeddings = [self._get_embedding(c) for c in chunks]
+        query_embedding = self._get_embedding(query)
+
+        chunk_matrix = np.array(chunk_embeddings)
+        query_vector = np.array(query_embedding).reshape(1, -1)
+
+        similarities = cosine_similarity(query_vector, chunk_matrix).flatten()
         top_indices = similarities.argsort()[::-1][:top_k]
 
         return [chunks[i] for i in top_indices if similarities[i] > 0]
@@ -78,7 +103,7 @@ Analyze the retrieved context below and complete the user query.
         start_total = time.time()
 
         start_retrieval = time.time()
-        retrieved_chunks = self.retrieve_relevant_chunks(transcript, query=query)
+        retrieved_chunks = self.retrieve_relevant_chunks_tfidf(transcript, query=query)
         retrieval_time = time.time() - start_retrieval
 
         prompt = self._build_rag_prompt(retrieved_chunks if retrieved_chunks else [transcript], query)

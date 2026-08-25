@@ -3,3 +3,4 @@
 __pycache__/
 .env
 **/.env
+05_Enterprise_RAG_Agent/venv/

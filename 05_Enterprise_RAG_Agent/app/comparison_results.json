@@ -1,0 +1,91 @@
+{
+  "total_cases": 6,
+  "tfidf_hit_rate": 0.833,
+  "embedding_hit_rate": 0.833,
+  "rows": [
+    {
+      "sample_id": "sample_1_ai_project_review",
+      "query": "함동현님 담당 업무의 마감일은 언제인가요",
+      "tfidf": {
+        "hit": true,
+        "mean_time_sec": 0.00134,
+        "stdev_time_sec": 0.00093
+      },
+      "embedding": {
+        "hit": true,
+        "mean_time_sec": 2.25309,
+        "stdev_time_sec": 0.34293
+      }
+    },
+    {
+      "sample_id": "sample_1_ai_project_review",
+      "query": "팀원 A는 언제까지 확인 작업을 끝내나요",
+      "tfidf": {
+        "hit": true,
+        "mean_time_sec": 0.00249,
+        "stdev_time_sec": 0.00107
+      },
+      "embedding": {
+        "hit": true,
+        "mean_time_sec": 2.11187,
+        "stdev_time_sec": 0.12631
+      }
+    },
+    {
+      "sample_id": "sample_2_budget_review",
+      "query": "비용 문제를 어떻게 해결할 계획인가요",
+      "tfidf": {
+        "hit": true,
+        "mean_time_sec": 0.0024,
+        "stdev_time_sec": 0.00102
+      },
+      "embedding": {
+        "hit": true,
+        "mean_time_sec": 4.89919,
+        "stdev_time_sec": 2.61562
+      }
+    },
+    {
+      "sample_id": "sample_2_budget_review",
+      "query": "계약 서명은 어떤 조건에서 이루어지나요",
+      "tfidf": {
+        "hit": true,
+        "mean_time_sec": 0.00316,
+        "stdev_time_sec": 0.00306
+      },
+      "embedding": {
+        "hit": true,
+        "mean_time_sec": 6.96821,
+        "stdev_time_sec": 0.68871
+      }
+    },
+    {
+      "sample_id": "sample_3_onboarding",
+      "query": "신규 인턴을 위한 자료는 누가 만드나요",
+      "tfidf": {
+        "hit": false,
+        "mean_time_sec": 0.00116,
+        "stdev_time_sec": 0.00073
+      },
+      "embedding": {
+        "hit": false,
+        "mean_time_sec": 6.91307,
+        "stdev_time_sec": 0.63442
+      }
+    },
+    {
+      "sample_id": "sample_3_onboarding",
+      "query": "그룹 참여 인원은 어떻게 모으나요",
+      "tfidf": {
+        "hit": true,
+        "mean_time_sec": 0.00219,
+        "stdev_time_sec": 0.00073
+      },
+      "embedding": {
+        "hit": true,
+        "mean_time_sec": 7.0119,
+        "stdev_time_sec": 0.28244
+      }
+    }
+  ]
+}
