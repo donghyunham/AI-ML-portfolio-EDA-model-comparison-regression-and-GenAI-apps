@@ -6,8 +6,11 @@
 ---
 
 ## Tech Stack
-- LLM & Cloud Services: AWS Bedrock
-- Language & Framework: Python 3.10+, LangChain
+- LLM & Cloud Services: AWS Bedrock (Claude Haiku 4.5, Titan Text Embeddings V2)
+- Backend: FastAPI, Uvicorn, Pydantic
+- Frontend: Streamlit
+- Data / ML: Python 3.10, Scikit-learn (TF-IDF, Cosine Similarity), boto3
+- Infra: Docker, python-dotenv
 - Prompt Engineering: Task Decomposition, Persona Setting, Output Format Safeguard
 
 ---
@@ -42,8 +45,28 @@
 
 ---
 
+## 실행 방법
+
+### 환경변수 설정
+.env.example을 참고해 .env 파일을 생성하고 AWS Credential을 입력한다.
+
+### 로컬 실행
+cd 05_Enterprise_RAG_Agent
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+
+FastAPI 서버가 뜨면 별도 터미널에서 Streamlit UI를 실행한다.
+streamlit run app/streamlit_app.py
+
+### Docker 실행
+cd 05_Enterprise_RAG_Agent
+docker build -t rag-agent .
+docker run -p 8000:8000 --env-file .env rag-agent
+
+---
+
 ## 주요 성과 및 인사이트
 - 정형화되지 않은 텍스트 데이터를 즉시 실행 가능한 결론으로 자동 변환하여 문서 작성 및 요약 시간 단축
 - 시스템 프롬프트 가드레일 설정을 통해 환각률 최소화 및 출력 일관성 확보
 - 에이전틱 워크플로우(Agentic Workflow) 설계를 통한 복잡한 추론 문제 해결 역량 검증
-- TF-IDF와 Titan Embeddings 두 리트리벌 방식을 정량 비교 검증하고, 실패 원인을 청킹 구조 문제로 규명하여 근거 기반 기술 선택 역량 검증 
+- TF-IDF와 Titan Embeddings 두 리트리벌 방식을 정량 비교 검증하고, 실패 원인을 청킹 구조 문제로 규명하여 근거 기반 기술 선택 역량 검증
