@@ -9,7 +9,7 @@
 - LLM & Cloud Services: AWS Bedrock (Claude Haiku 4.5, Titan Text Embeddings V2)
 - Backend: FastAPI, Uvicorn, Pydantic
 - Frontend: Streamlit
-- Data / ML: Python 3.10, Scikit-learn (TF-IDF, Cosine Similarity), boto3
+- Data / ML: Python 3.9 이상, Scikit-learn (TF-IDF, Cosine Similarity), boto3
 - Infra: Docker, python-dotenv
 - Prompt Engineering: Task Decomposition, Persona Setting, Output Format Safeguard
 
@@ -62,6 +62,20 @@ streamlit run app/streamlit_app.py
 cd 05_Enterprise_RAG_Agent
 docker build -t rag-agent .
 docker run -p 8000:8000 --env-file .env rag-agent
+
+---
+
+## 실행 화면
+
+### Streamlit UI, 실제 AWS Bedrock 연동 결과
+![Streamlit 실행 결과](docs/images/streamlit_result.png)
+
+회의록을 입력하고 RAG 기반 회의록 분석 실행 버튼을 누르면, TF-IDF 리트리벌로 관련 청크를 검색한 뒤 AWS Bedrock(Claude Haiku 4.5) API를 실제로 호출해 Executive Summary, Action Items, Key Decisions를 구조화된 형태로 생성한다. 초록색 안내 문구는 mock이 아닌 실제 Bedrock 응답임을 확인해준다.
+
+### FastAPI Swagger UI, POST /api/summarize
+![FastAPI Swagger UI](docs/images/fastapi_docs.png)
+
+Pydantic으로 정의한 MeetingRequest 스키마(transcript, query 필드)와 요청/응답 예시, 422 Validation Error 스펙까지 자동 생성된 API 문서다.
 
 ---
 
