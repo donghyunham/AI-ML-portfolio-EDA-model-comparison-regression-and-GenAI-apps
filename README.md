@@ -13,7 +13,7 @@
 ---
 
 ## About Me
-- Global Tech Capacity: 미국에서 6년 거주하며 다진. 글로벌 기술 문서, 최신 논문, AWS Official Guide 즉시 분석 및 도입
+- Global Tech Capacity: 미국에서 6년 거주하며 다진 Native 수준 영어. 글로벌 기술 문서, 최신 논문, AWS Official Guide 즉시 분석 및 도입
 - End-to-End Execution: 데이터 정제(Pandas/NumPy) -> 탐색적 분석(EDA) -> 머신러닝 파이프라인 최적화(Scikit-Learn) -> 생성형 AI 에이전트 서빙(AWS Bedrock/FastAPI) 전 과정 내재화
 - Engineering Integrity: Data Leakage 원천 차단, 과적합 진단, 체계적인 프롬프트 엔지니어링(CoT, Safeguard)을 통한 환각(Hallucination) 억제
 
