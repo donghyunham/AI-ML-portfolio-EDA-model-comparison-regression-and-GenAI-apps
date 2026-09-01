@@ -4,3 +4,10 @@ __pycache__/
 .env
 **/.env
 05_Enterprise_RAG_Agent/venv/
+05_Enterprise_RAG_Agent/app/debug_sample3.py
+05_Enterprise_RAG_Agent/app/debug_sample3_tfidf.py
+05_Enterprise_RAG_Agent/app/eval_runner.py
+05_Enterprise_RAG_Agent/app/eval_runner_embedding.py
+05_Enterprise_RAG_Agent/app/baseline_results.json
+05_Enterprise_RAG_Agent/app/embedding_results.json
+05_Enterprise_RAG_Agent/app/test_metrics.py
