@@ -72,20 +72,51 @@ class MeetingSummaryAgent:
 
         return [chunks[i] for i in top_indices if similarities[i] > 0]
 
-    def _build_rag_prompt(self, context_chunks: list, query: str) -> str:
-        context_text = "\n".join([f"- {chunk}" for chunk in context_chunks])
-        return f"""You are an executive AI Meeting Assistant utilizing Retrieval-Augmented Generation (RAG).
-Analyze the retrieved context below and complete the user query.
+    def _invoke_bedrock(self, prompt: str) -> str:
+        payload = {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 1000,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+        response = self.bedrock.invoke_model(
+            modelId=self.model_id,
+            body=json.dumps(payload)
+        )
+        result = json.loads(response['body'].read())
+        return result['content'][0]['text']
 
-[Retrieved Context]
+    def _analyze_transcript(self, context_chunks: list) -> str:
+        context_text = "\n".join([f"- {chunk}" for chunk in context_chunks])
+        prompt = f"""You are an executive AI Meeting Assistant.
+Read the meeting transcript excerpts below and identify the key discussion points, decisions, and any mentioned deadlines or responsible people.
+Do NOT format the final output yet. Just list the core points you found, in Korean.
+
+[Meeting Transcript]
 {context_text}
+"""
+        return self._invoke_bedrock(prompt)
+
+    def _classify_topics(self, analysis: str) -> str:
+        prompt = f"""Based on the meeting analysis below, group the discussion points into distinct topics or agenda items.
+For each topic, briefly state what was discussed and who is responsible, if mentioned. Output in Korean as a list of topics.
+
+[Meeting Analysis]
+{analysis}
+"""
+        return self._invoke_bedrock(prompt)
+
+    def _extract_action_items(self, classified_topics: str, query: str) -> str:
+        prompt = f"""You are an executive AI Meeting Assistant. Based on the classified topics below, complete the user query.
+
+[Constraints and Safeguards]
+Rely ONLY on the classified topics above. Do NOT assume or invent outside facts.
+Output strictly in Markdown.
+
+[Classified Topics]
+{classified_topics}
 
 [User Query]
 {query}
-
-[Constraints & Safeguards]
-- Rely ONLY on the retrieved context above. Do NOT assume or invent outside facts.
-- Output strictly in Markdown.
 
 [Output Format]
 ### 1. Executive Summary
@@ -98,6 +129,7 @@ Analyze the retrieved context below and complete the user query.
 ### 3. Key Decisions
 - ...
 """
+        return self._invoke_bedrock(prompt)
 
     def process_transcript(self, transcript: str, query: str = "회의 요약 및 액션 아이템 추출") -> tuple:
         start_total = time.time()
@@ -106,22 +138,17 @@ Analyze the retrieved context below and complete the user query.
         retrieved_chunks = self.retrieve_relevant_chunks_tfidf(transcript, query=query)
         retrieval_time = time.time() - start_retrieval
 
-        prompt = self._build_rag_prompt(retrieved_chunks if retrieved_chunks else [transcript], query)
+        context_chunks = retrieved_chunks if retrieved_chunks else [transcript]
 
         if self.bedrock:
             try:
-                payload = {
-                    "anthropic_version": "bedrock-2023-05-31",
-                    "max_tokens": 1000,
-                    "messages": [{"role": "user", "content": prompt}]
-                }
                 start_llm = time.time()
-                response = self.bedrock.invoke_model(
-                    modelId=self.model_id,
-                    body=json.dumps(payload)
-                )
+
+                analysis = self._analyze_transcript(context_chunks)
+                classified = self._classify_topics(analysis)
+                final_result = self._extract_action_items(classified, query)
+
                 llm_time = time.time() - start_llm
-                result = json.loads(response['body'].read())
 
                 self.last_metrics = {
                     "retrieval_time_sec": round(retrieval_time, 3),
@@ -130,7 +157,7 @@ Analyze the retrieved context below and complete the user query.
                     "retrieved_chunk_count": len(retrieved_chunks),
                     "used_mock": False,
                 }
-                return result['content'][0]['text'], retrieved_chunks, False, None
+                return final_result, retrieved_chunks, False, None
             except Exception as e:
                 logger.exception("Bedrock invoke_model 호출 실패: %s", e)
                 self.last_metrics = {
