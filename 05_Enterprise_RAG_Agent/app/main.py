@@ -4,7 +4,7 @@ from app.agent import MeetingSummaryAgent
 import uvicorn
 
 app = FastAPI(
-    title="Enterprise RAG Agent API",
+    title="Enterprise RAG API",
     description="AWS Bedrock 기반 회의록 요약 및 Action Item 추출 API",
     version="1.0.0"
 )
