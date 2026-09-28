@@ -1,5 +1,10 @@
 # 05_Enterprise_RAG_Agent
 
+## 라이브 데모
+아래 링크에서 실제 AWS Bedrock(Claude Haiku 4.5) 연동 결과를 바로 확인할 수 있다.
+
+https://ai-ml-portfolio-eda-model-comparison-regression-and-genai-apps.streamlit.app/
+
 ## 프로젝트 개요
 본 프로젝트는 AWS Bedrock 기반 RAG 시스템으로, 비구조화된 기업 회의록 및 텍스트 데이터를 분석하여 핵심 안건, 담당자, 이행 기한이 포함된 구조화된 Action Item으로 자동 변환하는 시스템입니다.
 
