@@ -40,6 +40,9 @@
 ### 실패 원인 분석
 실패는 리트리벌 알고리즘 자체의 문제가 아니라, 회의록을 줄 단위로 청킹하는 방식에서 비롯된 구조적 한계로 확인됐다. 질문 문장과 답 문장이 서로 다른 청크로 분리되면서, 질문끼리의 유사도가 질문과 답 사이의 유사도보다 높게 나오는 현상이 원인이었다.
 
+### 추가 개선: 짧은 회의록의 요약 누락 문제
+배포 준비 중 짧은 회의록 요약 시 TF-IDF 검색이 질문과 무관해 보이는 발언(유사도 0)을 제외시켜, 실제로는 중요한 Action Item이 누락되는 문제를 발견했다. 특정 질의에 답할 때는 검색이 유효하지만, 전체 요약이 목적일 때는 모든 발언이 빠짐없이 전달돼야 한다는 걸 확인했다. 이에 따라 회의록 길이가 2,000자 이하이면 전체 문맥을 그대로 전달하고, 이를 초과할 때만 TF-IDF 검색을 적용하도록 수정했다.
+
 ### 기본값 결정
 정확도가 동일한 조건에서는 더 빠른 방식을 채택하는 것이 합리적인 엔지니어링 판단이라 보고, process_transcript의 기본 리트리벌 방식은 TF-IDF로 유지했다. Titan Embeddings 기반 함수(retrieve_relevant_chunks_embedding)는 코드베이스에 남겨두어, 향후 청킹 전략 개선 시 재검증할 수 있도록 했다.
 
@@ -70,7 +73,7 @@ docker run -p 8000:8000 --env-file .env rag-agent
 ### Streamlit UI, 실제 AWS Bedrock 연동 결과
 ![Streamlit 실행 결과](docs/images/streamlit_result.png)
 
-회의록을 입력하고 RAG 기반 회의록 분석 실행 버튼을 누르면, TF-IDF 리트리벌로 관련 청크를 검색한 뒤 AWS Bedrock(Claude Haiku 4.5) API를 실제로 호출해 Executive Summary, Action Items, Key Decisions를 구조화된 형태로 생성한다. 초록색 안내 문구는 mock이 아닌 실제 Bedrock 응답임을 확인해준다.
+회의록을 입력하고 RAG 기반 회의록 분석 실행 버튼을 누르면, 회의록 길이에 따라 전체 문맥 또는 TF-IDF 리트리벌 결과를 AWS Bedrock(Claude Haiku 4.5) API에 전달해 Executive Summary, Action Items, Key Decisions를 구조화된 형태로 생성한다. 초록색 안내 문구는 mock이 아닌 실제 Bedrock 응답임을 확인해준다.
 
 ### FastAPI Swagger UI, POST /api/summarize
 ![FastAPI Swagger UI](docs/images/fastapi_docs.png)
