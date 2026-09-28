@@ -16,10 +16,12 @@ logger = logging.getLogger(__name__)
 
 class MeetingSummaryAgent:
     """
-    AWS Bedrock 기반 RAG (Retrieval-Augmented Generation) 회의록 에이전트.
-    1. Retrieval: 입력 문서를 청크 단위로 분할 및 코사인 유사도 기반 관련 맥락 검색
-    2. Generation: 검색된 맥락을 기반으로 Task Decomposition 및 Zero-Hallucination 요약 생성
+    AWS Bedrock 기반 RAG (Retrieval-Augmented Generation) 회의록 요약 시스템.
+    1. Context: 짧은 회의록은 전체 문맥을 전달하고, 긴 회의록은 코사인 유사도 기반으로 관련 맥락을 검색
+    2. Generation: 전달된 맥락을 기반으로 Task Decomposition 및 Zero-Hallucination 요약 생성
     """
+
+    FULL_CONTEXT_CHAR_LIMIT = 2000
 
     def __init__(self, region_name=None, model_id=None):
         self.model_id = model_id or os.getenv("BEDROCK_MODEL_ID", "global.anthropic.claude-haiku-4-5-20251001-v1:0")
@@ -135,7 +137,12 @@ Output strictly in Markdown.
         start_total = time.time()
 
         start_retrieval = time.time()
-        retrieved_chunks = self.retrieve_relevant_chunks_tfidf(transcript, query=query)
+        if len(transcript) <= self.FULL_CONTEXT_CHAR_LIMIT:
+            retrieved_chunks = [c.strip() for c in transcript.strip().split("\n") if c.strip() and not c.strip().startswith("[")]
+            retrieval_mode = "full_context"
+        else:
+            retrieved_chunks = self.retrieve_relevant_chunks_tfidf(transcript, query=query)
+            retrieval_mode = "tfidf"
         retrieval_time = time.time() - start_retrieval
 
         context_chunks = retrieved_chunks if retrieved_chunks else [transcript]
@@ -151,6 +158,7 @@ Output strictly in Markdown.
                 llm_time = time.time() - start_llm
 
                 self.last_metrics = {
+                    "retrieval_mode": retrieval_mode,
                     "retrieval_time_sec": round(retrieval_time, 3),
                     "llm_response_time_sec": round(llm_time, 3),
                     "total_time_sec": round(time.time() - start_total, 3),
@@ -161,6 +169,7 @@ Output strictly in Markdown.
             except Exception as e:
                 logger.exception("Bedrock invoke_model 호출 실패: %s", e)
                 self.last_metrics = {
+                    "retrieval_mode": retrieval_mode,
                     "retrieval_time_sec": round(retrieval_time, 3),
                     "llm_response_time_sec": None,
                     "total_time_sec": round(time.time() - start_total, 3),
@@ -171,6 +180,7 @@ Output strictly in Markdown.
         else:
             logger.warning("Bedrock 클라이언트가 초기화되지 않아 mock 응답을 반환합니다.")
             self.last_metrics = {
+                "retrieval_mode": retrieval_mode,
                 "retrieval_time_sec": round(retrieval_time, 3),
                 "llm_response_time_sec": None,
                 "total_time_sec": round(time.time() - start_total, 3),

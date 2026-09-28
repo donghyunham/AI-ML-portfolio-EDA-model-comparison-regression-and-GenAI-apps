@@ -2,17 +2,16 @@ import os
 import streamlit as st
 from agent import MeetingSummaryAgent
 
-st.set_page_config(page_title="Enterprise RAG Meeting Agent", page_icon="📝", layout="wide")
+st.set_page_config(page_title="Enterprise RAG Meeting Summarizer", page_icon="📝", layout="wide")
 
-st.title("Enterprise RAG Agent: Meeting Summarizer")
-st.caption("AWS Bedrock & Retrieval-Augmented Generation (RAG) 기반 회의록 요약 및 Action Item 추출 에이전트")
+st.title("Enterprise RAG: Meeting Summarizer")
+st.caption("AWS Bedrock & Retrieval-Augmented Generation (RAG) 기반 회의록 요약 및 Action Item 추출 시스템")
 
-st.sidebar.header("Agent Settings")
-region = st.sidebar.text_input("AWS Region", value=os.getenv("AWS_DEFAULT_REGION", "us-east-1"))
-model_id = st.sidebar.text_input(
-    "Bedrock Model ID",
-    value=os.getenv("BEDROCK_MODEL_ID", "global.anthropic.claude-haiku-4-5-20251001-v1:0")
-)
+st.sidebar.header("Settings")
+region = os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+model_id = os.getenv("BEDROCK_MODEL_ID", "global.anthropic.claude-haiku-4-5-20251001-v1:0")
+st.sidebar.write(f"AWS Region: {region}")
+st.sidebar.write(f"Bedrock Model: {model_id}")
 
 sample_transcript = """[회의록 - 2026년 8월 AI 프로젝트 리뷰]
 참석자: 함동현, 팀원 A
@@ -26,10 +25,10 @@ sample_transcript = """[회의록 - 2026년 8월 AI 프로젝트 리뷰]
 함동현: 네, Claude Haiku 4.5 모델을 기반으로 Task Decomposition과 출력 가드레일을 적용해 구축하겠습니다."""
 
 st.subheader("Meeting Transcript Input")
-transcript_input = st.text_area("회의록 텍스트를 입력하거나 기본 샘플을 사용하세요.", value=sample_transcript, height=200)
+transcript_input = st.text_area("회의록 텍스트를 입력하거나 기본 샘플을 사용하세요.", value=sample_transcript, height=200, max_chars=5000)
 
 if st.button("RAG 기반 회의록 분석 실행", type="primary"):
-    with st.spinner("RAG Vector Retrieval 및 AWS Bedrock Agent 분석 진행 중..."):
+    with st.spinner("RAG 검색 및 AWS Bedrock 분석 진행 중..."):
         agent = MeetingSummaryAgent(region_name=region, model_id=model_id)
         result, chunks, used_mock, error_message = agent.process_transcript(transcript_input)
 
@@ -38,7 +37,7 @@ if st.button("RAG 기반 회의록 분석 실행", type="primary"):
         else:
             st.success("✅ 실제 AWS Bedrock 응답입니다. RAG 파이프라인 분석 완료!")
 
-        with st.expander("Retrieved Context Chunks (RAG 검색 결과)"):
+        with st.expander("Context Chunks (LLM에 전달된 문맥)"):
             for idx, chunk in enumerate(chunks, 1):
                 st.write(f"**Chunk {idx}:** {chunk}")
 
